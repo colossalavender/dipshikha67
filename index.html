@@ -145,13 +145,69 @@ Paste letters, essays, long personal text — anything.
 
 <h2 style="margin-top:60px">Reply</h2>
 
-<iframe 
-  src="https://docs.google.com/forms/d/e/1FAIpQLSfNY0keme1ElFuNpVPdspdekmWc9ULkIUJPWt7jRokOHCDyKg/viewform?embedded=true"
-  width="100%"
-  height="700"
-  frameborder="0"
-  style="border-radius:12px;border:none;">
-</iframe>
+<div id="replyBox">
+<textarea id="msg" placeholder="Write something…" rows="3"></textarea>
+<button onclick="send()">Send</button>
+</div>
+
+<div id="messages"></div>
+
+<style>
+#replyBox{
+max-width:900px;
+margin:auto;
+display:flex;
+gap:10px;
+}
+#replyBox textarea{
+flex:1;
+padding:12px;
+border-radius:12px;
+border:1px solid #ccc;
+font-family:Poppins;
+}
+#replyBox button{
+padding:12px 20px;
+border-radius:12px;
+border:none;
+background:#667eea;
+color:white;
+}
+#messages{
+max-width:900px;
+margin:30px auto;
+font-size:15px;
+}
+.msg{
+background:#f4f4f6;
+padding:12px 16px;
+border-radius:12px;
+margin-bottom:10px;
+}
+</style>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxDcF74J-r0Ik0sgop1Z8RBl8mlJbNtex-ORFgVtX5KbsV3ElQHO2-47u6rtCr9Ay7DRA/exec";
+
+function send(){
+const text = msg.value.trim();
+if(!text) return;
+fetch(API_URL,{method:"POST",body:new URLSearchParams({message:text})})
+.then(()=>{msg.value=""; load();});
+}
+
+function load(){
+fetch(API_URL)
+.then(r=>r.json())
+.then(data=>{
+messages.innerHTML = data.map(
+r=>`<div class="msg">${r[1]}</div>`
+).join("");
+});
+}
+
+load();
+</script>
   
   <button class="logout" onclick="logout()">Logout</button>
 </div>
